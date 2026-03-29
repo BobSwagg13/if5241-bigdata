@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-"""
-preprocess_csv.py — Pra-proses CSV sebelum KMeans
-
-Yang dilakukan:
-  1. Baca CSV (satu kali pass) → hitung mean & std tiap kolom
-  2. Simpan stats ke col_stats.csv (dipakai mapper untuk normalisasi)
-  3. Pilih K baris acak sebagai centroid awal → centroids_0.txt
-  4. Laporan: berapa baris valid, berapa yang dilewati
-
-Jalankan DULU sebelum run_kmeans_csv.py:
-  python preprocess_csv.py data_steam.csv
-"""
-
-import sys
 import csv
 import random
 import math

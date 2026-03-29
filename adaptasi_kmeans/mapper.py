@@ -1,16 +1,3 @@
-#!/usr/bin/env python3
-"""
-mapper_csv.py — Mapper KMeans untuk CSV Steam
-
-Kolom yang dipakai (semua numerik):
-  Peak CCU, Required age, Price, DiscountDLC count,
-  Positive, Negative, Score rank, Average playtime two weeks,
-  Median playtime forever, Median playtime two weeks, Recommendations
-
-Jalankan:
-  python mapper_csv.py centroids_0.txt < data.csv
-"""
-
 import sys
 import math
 import csv
