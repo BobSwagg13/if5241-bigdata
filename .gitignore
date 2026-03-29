@@ -1,3 +1,5 @@
 **/hadoop
 **/notebooks
 **/.DS_Store
+**/.csv
+adaptasi_kmeans/games.csv
