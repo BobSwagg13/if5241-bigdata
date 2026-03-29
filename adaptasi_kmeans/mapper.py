@@ -15,7 +15,6 @@ import sys
 import math
 import csv
 
-# --- Kolom numerik yang akan digunakan ---
 NUMERIC_COLS = [
     "Peak CCU",
     "Required age",
@@ -34,7 +33,7 @@ def euclidean(p1, p2):
     return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))
 
 def load_centroids(filepath):
-    """Baca centroid. Format: cluster_id,v0,v1,...,v10"""
+    "Baca centroid. Format: cluster_id,v0,v1,...,v10"
     centroids = []
     with open(filepath) as f:
         for line in f:
@@ -62,37 +61,25 @@ def normalize(value, col_stats, col_name):
 def load_col_stats(filepath="col_stats.csv"):
     """Baca statistik kolom (mean, std) yang dihitung oleh preprocess.py"""
     stats = {}
-    try:
-        with open(filepath) as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                col = row["col"]
-                stats[col] = {
-                    "mean": float(row["mean"]),
-                    "std":  float(row["std"]),
-                }
-    except FileNotFoundError:
-        # Jika belum ada stats, gunakan raw value (tanpa normalisasi)
-        pass
+    with open(filepath) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            col = row["col"]
+            stats[col] = {
+                "mean": float(row["mean"]),
+                "std":  float(row["std"]),
+            }
     return stats
 
 def parse_row(row, col_stats):
     """
     Ambil nilai 11 kolom numerik dari satu baris CSV.
-    Return list of float, atau None jika ada kolom kosong/invalid.
     """
     vector = []
     for col in NUMERIC_COLS:
-        raw = row.get(col, "").strip()
-        if raw == "" or raw is None:
-            return None  # skip baris yang ada kolom kosong
-        try:
-            val = float(raw)
-        except ValueError:
-            return None
-        # Normalisasi jika stats tersedia
-        if col_stats and col in col_stats:
-            val = normalize(val, col_stats, col)
+        raw = row[col].strip()
+        val = float(raw)
+        val = normalize(val, col_stats, col)
         vector.append(val)
     return vector
 
@@ -101,14 +88,10 @@ def mapper(centroid_file):
     col_stats  = load_col_stats("col_stats.csv")
 
     reader = csv.DictReader(sys.stdin)
-    skipped = 0
     processed = 0
 
     for row in reader:
         vector = parse_row(row, col_stats)
-        if vector is None:
-            skipped += 1
-            continue
 
         # Hitung jarak ke semua centroid
         distances = [
@@ -122,10 +105,5 @@ def mapper(centroid_file):
         print(f"{nearest_cid}\t{vec_str}")
         processed += 1
 
-    print(f"[mapper] processed={processed} skipped={skipped}", file=sys.stderr)
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python mapper_csv.py <centroid_file>", file=sys.stderr)
-        sys.exit(1)
-    mapper(sys.argv[1])
+centroid_file = sys.argv[1]
+mapper(centroid_file)
