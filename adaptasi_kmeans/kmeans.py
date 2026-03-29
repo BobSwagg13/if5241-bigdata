@@ -1,6 +1,7 @@
 import subprocess
 import math
 
+# konfigurasi iterasi KMeans 
 MAX_ITERATIONS = 5
 CONVERGENCE_THRESHOLD = 0.001
 csv_file = "games.csv"
@@ -34,6 +35,7 @@ def centroid_shift(old, new):
     return max_shift
 
 def run_iteration(centroid_file, csv_file, iteration):
+    # pipeline mapper → sort → reducer
     cmd = (
         f"python3 mapper.py {centroid_file} < {csv_file}"
         f" | sort"
@@ -49,7 +51,7 @@ def run_iteration(centroid_file, csv_file, iteration):
         cid = int(parts[0])
         new_centroids[cid] = [float(x) for x in parts[1:]]
 
-    # Tampilkan log dari mapper/reducer
+    # log dari mapper/reducer
     for line in result.stderr.strip().split("\n"):
         if line:
             print("  " + line)
@@ -65,6 +67,7 @@ print(f"Threshold   : {CONVERGENCE_THRESHOLD}")
 current_file = "centroids_0.txt"
 
 for iteration in range(1, MAX_ITERATIONS + 1):
+    # cek centroid saat ini, hitung centroid baru, simpan
     old = load_centroids(current_file)
     print(f"\nIterasi {iteration}")
 
@@ -78,6 +81,7 @@ for iteration in range(1, MAX_ITERATIONS + 1):
     print(f"  Max centroid shift: {shift:.6f}")
 
     if shift < CONVERGENCE_THRESHOLD:
+        # berhenti jika pergeseran maksimum sudah di bawah threshold
         print(f"Konvergen di iterasi {iteration}")
         break
 else:

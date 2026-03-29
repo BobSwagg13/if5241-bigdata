@@ -2,6 +2,8 @@ import sys
 import math
 import csv
 
+# baca CSV dari stdin dengan field numerik yang akan dipakai untuk clustering
+
 NUMERIC_COLS = [
     "Peak CCU",
     "Required age",
@@ -80,7 +82,7 @@ def mapper(centroid_file):
     for row in reader:
         vector = parse_row(row, col_stats)
 
-        # Hitung jarak ke semua centroid
+        # cari centroid terdekat untuk vektor ini
         distances = [
             (cid, euclidean(vector, centroid))
             for cid, centroid in centroids
